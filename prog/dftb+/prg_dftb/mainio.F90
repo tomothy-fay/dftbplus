@@ -45,6 +45,7 @@ module mainio
   public :: writeCharges, writeEigenvectors, writeProjectedEigenvectors
   public :: writeCurrentGeometry, writeFinalDriverStatus
   public :: writeHSAndStop, writeHS
+  public :: WriteSpinDensities
   public :: printGeoStepInfo, printSccHeader, printSccInfo, printEnergies, printVolume
   public :: printPressureAndFreeEnergy, printMaxForce, printMaxLatticeForce
   public :: printMdInfo
@@ -1128,6 +1129,46 @@ contains
 
   end subroutine writeBandOut
 
+  !> Write the second derivative matrix
+  subroutine writeSpinDensities(fd, fileName, orb, species, qOutput, iGeoStep)
+
+    !> File ID
+    integer, intent(in) :: fd
+
+    !> File name
+    character(*), intent(in) :: fileName
+
+    !> Type containing atomic orbital information
+    type(TOrbitals), intent(in) :: orb
+
+    !> Chemical species of atoms
+    integer, intent(in) :: species(:)
+
+    !> Output Mulliken charges
+    real(dp), intent(in) :: qOutput(:,:,:)
+
+    !> Geometry step number
+    integer, intent(in) :: iGeoStep
+
+    real(dp), allocatable :: qOutputUpDown(:,:,:)
+    integer :: nAtom, iAt, iSp, spinDensity
+
+    nAtom = size(species)
+    qOutputUpDown = qOutput
+    call qm2ud(qOutputUpDown)
+
+    !> Writes the s-orbital spin densities
+    write(fd, "(A, I0)") "MD iter: ", iGeoStep
+    do iAt = 1, nAtom
+      iSp = species(iAt) ! integer identifier for this species
+      ! the s-orbital spin density
+      spinDensity = qOutputUpDown(orb%posShell(1, iSp), iAt, 1) &
+        & - qOutputUpDown(orb%posShell(1, iSp), iAt, 2)
+      write(fd, "(I5, F16.8)") iAt, spinDensity
+    end do
+    write(fd, *)
+
+  end subroutine writeSpinDensities
 
   !> Write the second derivative matrix
   subroutine writeHessianOut(fd, fileName, pDynMatrix)

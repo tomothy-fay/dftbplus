@@ -2583,9 +2583,9 @@ contains
     call getChildValue(node, "WriteSpinDensities", ctrl%tWriteSpinDensities, &
         &.false., child=child)
     ! if this is not a spin polarised MD calcualtion cannot output spindensities
-    if (.not.(tMD)) then
+    if (ctrl%tWriteSpinDensities.and.(.not.ctrl%tMD)) then
       call detailedError(child, "Spin density output only implemented for MD simualtions")
-    elseif (.not.(tSpin))
+    elseif (ctrl%tWriteSpinDensities.and..not.ctrl%tSpin) then
       call detailedError(child, "Spin density output only possible for spin poalrised calculations")
     end if
 

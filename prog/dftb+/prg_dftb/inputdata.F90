@@ -319,12 +319,14 @@ module inputdata_module
     !> Various options
     logical :: tWriteTagged = .false.
 
+    ! dev-notes - add tWriteSpinDensities here
     !> Nr. of SCC iterations without restart info
     integer :: restartFreq  = 20
     logical :: tWriteDetailedXML = .false.
     logical :: tWriteResultsTag = .false.
     logical :: tWriteDetailedOut = .true.
     logical :: tWriteBandDat = .true.
+    logical :: tWriteSpinDensities = .false.
     logical :: oldSKInter = .false.
     logical :: tWriteHS = .false.
     logical :: tWriteRealHS = .false.

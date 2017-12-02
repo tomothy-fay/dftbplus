@@ -2561,7 +2561,7 @@ contains
 
   end subroutine getFullTable
 
-
+  ! dev-notes - add reading WriteSpinDensities here
   !> Reads the option block
   subroutine readOptions(node, ctrl)
 
@@ -2580,6 +2580,15 @@ contains
         &.false.)
     call getChildValue(node, "WriteDetailedOut", ctrl%tWriteDetailedOut, &
         &.true.)
+    call getChildValue(node, "WriteSpinDensities", ctrl%tWriteSpinDensities, &
+        &.false., child=child)
+    ! if this is not a spin polarised MD calcualtion cannot output spindensities
+    if (.not.(tMD)) then
+      call detailedError(child, "Spin density output only implemented for MD simualtions")
+    elseif (.not.(tSpin))
+      call detailedError(child, "Spin density output only possible for spin poalrised calculations")
+    end if
+
 
     if (.not.(ctrl%tMD.or.ctrl%tGeoOpt)) then
       if (ctrl%tSCC) then

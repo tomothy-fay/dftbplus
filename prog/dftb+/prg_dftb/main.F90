@@ -512,6 +512,10 @@ contains
             & nSpin, qOutput, velocities)
       end if
 
+      if (tWriteSpinDensities) then
+        call writeSpinDensities(fdSpinDensities, spinDensities, orb, species, qOutput, iGeoStep)
+      end if
+
       call printEnergies(energy)
 
       if (tForces) then

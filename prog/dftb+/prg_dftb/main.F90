@@ -89,6 +89,9 @@ module main
   !> Second derivative of the energy with respect to atomic positions
   character(*), parameter :: hessianOut = "hessian.out"
 
+  !> S orbital spin densities on each atom
+  character(*), parameter :: spinDensities = "spindensities.out"
+
   !> O(N^2) density matrix creation
   logical, parameter :: tDensON2 = .false.
 
@@ -250,6 +253,9 @@ contains
     !> File descriptor for charge restart file
     integer :: fdCharges
 
+    !> File descriptor for spin densities file
+    integer :: fdSpinDensities
+
     !> Charge error in the last iterations
     real(dp) :: sccErrorQ, diffElec
     real(dp), allocatable :: orbitalL(:,:,:)
@@ -283,9 +289,12 @@ contains
     real(dp) :: localisation
 
     ! set up output files
+    ! call initOutputFiles(tWriteAutotest, tWriteResultsTag, tWriteBandDat, tDerivs,&
+    !     & tWriteDetailedOut, tMd, tGeoOpt, geoOutFile, fdAutotest, fdResultsTag, fdBand, fdEigvec,&
+    !     & fdHessian, fdDetailedOut, fdMd, fdCharges)
     call initOutputFiles(tWriteAutotest, tWriteResultsTag, tWriteBandDat, tDerivs,&
-        & tWriteDetailedOut, tMd, tGeoOpt, geoOutFile, fdAutotest, fdResultsTag, fdBand, fdEigvec,&
-        & fdHessian, fdDetailedOut, fdMd, fdCharges)
+        & tWriteDetailedOut, tWriteSpinDensities, tMd, tGeoOpt, geoOutFile, fdAutotest, fdResultsTag, fdBand, fdEigvec,&
+        & fdHessian, fdDetailedOut, fdMd, fdCharges, fdSpinDensities)
 
     ! set up larger arrays
     call initArrays(tForces, tExtChrg, tLinResp, tLinRespZVect, tMd, tMulliken, tSpinOrbit, tImHam,&
@@ -744,8 +753,8 @@ contains
 
   !> Initialises (clears) output files.
   subroutine initOutputFiles(tWriteAutotest, tWriteResultsTag, tWriteBandDat, tDerivs,&
-      & tWriteDetailedOut, tMd, tGeoOpt, geoOutFile, fdAutotest, fdResultsTag, fdBand, fdEigvec,&
-      & fdHessian, fdDetailedOut, fdMd, fdChargeBin)
+      & tWriteDetailedOut, tWriteSpinDensities, tMd, tGeoOpt, geoOutFile, fdAutotest, fdResultsTag, fdBand, fdEigvec,&
+      & fdHessian, fdDetailedOut, fdMd, fdChargeBin, fdSpinDensities)
 
     !> Should tagged regression test data be printed
     logical, intent(in) :: tWriteAutotest
@@ -755,6 +764,9 @@ contains
 
     !> Band structure and fillings
     logical, intent(in) :: tWriteBandDat
+
+    !> Spin Densities
+    logical, intent(in) :: tWriteSpinDensities
 
     !> Finite different second derivatives
     logical, intent(in) :: tDerivs
@@ -795,6 +807,9 @@ contains
     !> File descriptor for charge restart file
     integer, intent(out) :: fdChargeBin
 
+    !> File descriptor for charge restart file
+    integer, intent(out) :: fdSpinDensities
+
 
     call initTaggedWriter()
     if (tWriteAutotest) then
@@ -815,6 +830,9 @@ contains
     end if
     if (tMD) then
       call initOutputFile(mdOut, fdMD)
+    end if
+    if (tWriteSpinDensities) then
+      call initOutputFile(spinDensities, fdSpinDensities)
     end if
     if (tGeoOpt .or. tMD) then
       call clearFile(trim(geoOutFile) // ".gen")

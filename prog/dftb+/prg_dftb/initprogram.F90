@@ -606,6 +606,9 @@ module initprogram
   !> Produce detailed.out
   logical :: tWriteDetailedOut
 
+  !> Produce spindensities.out
+  logical :: tWriteSpinDensities
+
   !> Produce band.dat
   logical :: tWriteBandDat
 
@@ -1988,6 +1991,7 @@ contains
     tWriteDetailedXML = input%ctrl%tWriteDetailedXML
     tWriteResultsTag = input%ctrl%tWriteResultsTag
     tWriteDetailedOut = input%ctrl%tWriteDetailedOut
+    tWriteSpinDensities = input%ctrl%tWriteSpinDensities
     tWriteBandDat = input%ctrl%tWriteBandDat
     tWriteHS = input%ctrl%tWriteHS
     tWriteRealHS = input%ctrl%tWriteRealHS

@@ -90,7 +90,7 @@ module main
   character(*), parameter :: hessianOut = "hessian.out"
 
   !> S orbital spin densities on each atom
-  character(*), parameter :: spinDensities = "spindensities.out"
+  character(*), parameter :: sdOut = "spindensities.out"
 
   !> O(N^2) density matrix creation
   logical, parameter :: tDensON2 = .false.
@@ -513,7 +513,7 @@ contains
       end if
 
       if (tWriteSpinDensities) then
-        call writeSpinDensities(fdSpinDensities, spinDensities, orb, species, qOutput, iGeoStep)
+        call writeSpinDensities(fdSpinDensities, sdOut, orb, species, qOutput, iGeoStep)
       end if
 
       call printEnergies(energy)
@@ -701,6 +701,10 @@ contains
 
     call writeFinalDriverStatus(tGeoOpt, tGeomEnd, tMd, tDerivs)
 
+    if(tWriteSpinDensities) then
+      close(fdSpinDensities)
+    end if
+
     if (tMD) then
       call writeMdOut3(fdMd, mdOut)
     end if
@@ -836,7 +840,7 @@ contains
       call initOutputFile(mdOut, fdMD)
     end if
     if (tWriteSpinDensities) then
-      call initOutputFile(spinDensities, fdSpinDensities)
+      call initOutputFile(sdOut, fdSpinDensities)
     end if
     if (tGeoOpt .or. tMD) then
       call clearFile(trim(geoOutFile) // ".gen")

@@ -1151,11 +1151,16 @@ contains
     integer, intent(in) :: iGeoStep
 
     real(dp), allocatable :: qOutputUpDown(:,:,:)
-    integer :: nAtom, iAt, iSp, spinDensity
+    integer :: nAtom, iAt, iSp
+    real(dp) :: spinDensity
 
     nAtom = size(species)
     qOutputUpDown = qOutput
     call qm2ud(qOutputUpDown)
+
+    if (iGeoStep == 0) then
+      open(fd, file=fileName, status="replace", action="write")
+    end if
 
     !> Writes the s-orbital spin densities
     write(fd, "(A, I0)") "MD iter: ", iGeoStep
